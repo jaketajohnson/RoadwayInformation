@@ -27,7 +27,7 @@ def ScriptLogging():
     return logging_output
 
 
-def roadway_information():
+def RoadwayInformation():
     """Dissolve roadway information segments"""
     logger = ScriptLogging()
     logger.info("Script Execution Start")
@@ -68,7 +68,7 @@ def roadway_information():
 
 
 def main():
-    roadway_information()
+    RoadwayInformation()
 
 
 if __name__ == '__main__':
