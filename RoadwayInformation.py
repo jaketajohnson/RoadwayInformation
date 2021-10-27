@@ -38,7 +38,7 @@ paser_concrete_table = os.path.join(roadway_info_gdb, "PASER_CONCRETE_table")
 paser_sealcoat_table = os.path.join(roadway_info_gdb, "PASER_SEALCOAT_table")
 
 # PASER output layers
-paser = os.path.join(roadway_info_gdb, "PASER")
+paser_merged = os.path.join(roadway_info_gdb, "PASER")
 paser_asphalt = os.path.join(roadway_info_gdb, "PASER_ASPHALT")
 paser_brick = os.path.join(roadway_info_gdb, "PASER_BRICK")
 paser_concrete = os.path.join(roadway_info_gdb, "PASER_CONCRETE")
@@ -65,7 +65,7 @@ def paser_loop(view, table_name, table, output_name, expression):
 def initial_delete():
     # Delete old output layers to avoid conflicts
     layers_to_delete = [pavement_segments, pavement_inspections,  # Pavement
-                        paser, paser_asphalt, paser_brick, paser_concrete, paser_sealcoat]  # PASER
+                        paser_merged, paser_asphalt, paser_brick, paser_concrete, paser_sealcoat]  # PASER
     for layer in layers_to_delete:
         if arcpy.Exists(layer):
             arcpy.Delete_management(layer)
@@ -89,16 +89,16 @@ def paser():
     """Loop through paser_list then cleanup layers"""
 
     for paser_type in paser_list:
-        paser_loop(paser_type[0], paser_type[1], paser_type[2], paser_type[3], paser_type[5])
+        paser_loop(paser_type[0], paser_type[1], paser_type[2], paser_type[3], paser_type[4])
 
     # Merge all PASER layers and remove unnecessary fields
     Logging.logger.info("------START MERGE")
     layers_to_merge = [paser_asphalt, paser_brick, paser_concrete, paser_sealcoat]
-    fields_to_delete = ["RAVELING", "FLUSHING", "POLISHING", "RUTTING", "HEAVING", "SETTLING", "TRENCH", "PATCHES", "POTHOLES", "UTILITY", "TRANSVERSE", "REFLECTION", "SLIPPAGE", "LONGITUDINAL", "TRANSVERSE",
+    fields_to_delete = ["RAVELING", "FLUSHING", "POLISHING", "RUTTING", "HEAVING", "SETTLING", "TRENCH", "PATCHES", "POTHOLES", "UTILITY", "REFLECTION", "SLIPPAGE", "LONGITUDINAL", "TRANSVERSE",
                         "PUMPING", "GRADE", "INFILTRATION", "LENGTH", "MATERIAL", "JOINTEROSION", "BROKEN", "GAPS", "BRICK", "WEAR", "MAP", "POPOUTS", "SCALING", "REINFORCING", "SPALLING", "BLOWUPS", "FAULTING",
                         "DEFORMATION", "TRAVERSE", "DCRACKS", "CORNER", "MEANDER", "MANHOLE", "PUMPING", "EDGE", "BLOCK", "ALLIGATOR", "VEGETATION", "DRAINAGE"]
-    arcpy.Merge_management(layers_to_merge, paser)
-    arcpy.DeleteField_management(paser, fields_to_delete)
+    arcpy.Merge_management(layers_to_merge, paser_merged)
+    arcpy.DeleteField_management(paser_merged, fields_to_delete)
     Logging.logger.info("------FINISH MERGE")
 
 
@@ -109,6 +109,7 @@ def final_delete():
         if arcpy.Exists(layer):
             arcpy.Delete_management(layer)
 
+    # Leave in until script is confirmed functional; I've abstracted this to paser/paser_loop
     """# Join PASER inspections to RoadwayInformation from Publish.gdb then export to RoadwayInfo.gdb
     Logging.logger.info("------START PASER_ASPHALT")
     arcpy.TableToTable_conversion(paser_asphalt_view, roadway_info_gdb, "PASER_asphalt_table")
