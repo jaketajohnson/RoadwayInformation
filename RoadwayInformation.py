@@ -14,8 +14,8 @@ data = os.path.join(services, "Data")
 database_connections = os.path.join(services, "DatabaseConnections")
 
 # Publish
-publish = os.path.join(data, "Publish.gdb")
-facilities_streets_dataset = os.path.join(publish, "FacilitiesStreets")
+sde = os.path.join(database_connections, "COSPW@imSPFLD@MCWINTCWDB.sde")
+facilities_streets_dataset = os.path.join(sde, "FacilitiesStreets")
 roadway_info = os.path.join(facilities_streets_dataset, "RoadwayInformation")
 
 # Views
